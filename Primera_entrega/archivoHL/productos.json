@@ -1,0 +1,15 @@
+[
+  {
+    "id": 1,
+    "title": "bici",
+    "description": "Motor 6 tiempos",
+    "code": "jkl125",
+    "price": "5300",
+    "stock": "3",
+    "category": "motor",
+    "thumbnails": [
+      null
+    ],
+    "titulo": "bici"
+  }
+]
