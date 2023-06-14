@@ -47,7 +47,7 @@ router.post('/', async (req, res) => {
         carts.push(newCart);
 
         await fs.promises.writeFile(productsFilePath, JSON.stringify(carts, null, 2));
-        res.json(newCart);
+        res.send({ status: "succes", message: "Carrito generado con exito!!" });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Error al crear el carrito' });
@@ -68,7 +68,7 @@ router.get('/:cid', async (req, res) => {
             res.status(404).json({ error: 'Carrito no encontrado' });
             return;
         }
-        res.json(cart.products);
+        res.send({ status: "succes", playload: cart.products });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Error al obtener los productos del carrito' });
@@ -90,10 +90,9 @@ router.post('/:cid/products/:pid', async (req, res) => {
         }
 
         const data = await fs.promises.readFile(productsFilePath, 'utf-8');
-        console.log(data)
+
         const cart = JSON.parse(data);
 
-        console.log(cart)
         const cartIdOk = cart.find((c) => c.id === cartId)
 
         if (cartIdOk) {
@@ -109,7 +108,7 @@ router.post('/:cid/products/:pid', async (req, res) => {
                         quantity: 1,
                     });
                 }
-                await fs.promises.writeFile(productsFilePath, JSON.stringify(cart));
+                await fs.promises.writeFile(productsFilePath, JSON.stringify(cart, null, 2));
                 return res.send({ status: 'success', message: 'Producto agregado', playload: cartIdOk.products });
 
             } else {
