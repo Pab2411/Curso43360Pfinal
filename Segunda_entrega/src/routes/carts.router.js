@@ -1,5 +1,7 @@
 import { Router } from "express";
 import Cart from '../dao/dbManager/carts.js';
+import cartModel from "../dao/models/carts.js";
+import productModel from '../dao/models/products.js'
 
 const router = Router();
 const cartManager = new Cart();
@@ -15,8 +17,28 @@ router.post('/', async (req, res) => {
   }
 });
 
+
 // Obtener productos de un carrito por su ID
 
+
+router.get('/:cartId', async (req, res) => {
+  try {
+    const cartId = req.params.cartId;
+    const cart = await cartModel
+      .findById(cartId)
+      .populate({
+        path: 'products.product',
+        model: productModel,
+      })
+      .select('-__v');
+    res.json(cart);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error al obtener el carrito por su ID' });
+  }
+});
+
+/*
 router.get('/:cartId', async (req, res) => {
   try {
     const cartId = req.params.cartId;
@@ -27,6 +49,8 @@ router.get('/:cartId', async (req, res) => {
     res.status(500).json({ error: 'Error al obtener los productos del carrito' });
   }
 });
+*/
+
 
 // agrego un producto al carrito
 
