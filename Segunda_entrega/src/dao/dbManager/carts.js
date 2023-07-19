@@ -120,6 +120,31 @@ export default class Carts {
         return { error: 'Carrito no encontrado' };
       }
 
+      cart.products = products;
+
+      await cart.save();
+
+      return { status: 'success', message: 'Carrito actualizado con éxito' };
+    } catch (error) {
+      console.error(error);
+      return { error: 'Error al actualizar el carrito' };
+    }
+  }
+
+
+
+  /*updateCart = async (cartId, products) => {
+    try {
+      if (!cartId || !products) {
+        return { error: 'Los parámetros cartId y products son obligatorios' };
+      }
+
+      const cart = await cartModel.findById(cartId);
+
+      if (!cart) {
+        return { error: 'Carrito no encontrado' };
+      }
+
       for (const newProduct of products) {
         const existingProduct = cart.products.find(p => p.product.toString() === newProduct.product.toString());
 

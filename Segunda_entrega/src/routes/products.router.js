@@ -7,17 +7,47 @@ const router = Router();
 const productsManager = new Product();
 
 
-// Obtener todos los productos
 
+// Obtener todos los productos con opcion limit
+/*
 router.get('/', async (req, res) => {
-    let products = await productsManager.getAll();
-    res.send({ status: "success", payload: products })
-})
+    let limit = req.query.limit || 10; // Si no se proporciona un límite, se establece en 10.
+    limit = parseInt(limit); // Convierte el valor del límite a un número entero.
+
+    // Verifica si el límite no es un número válido o es menor que cero.
+    if (isNaN(limit) || limit < 1) {
+        limit = 10; // Establece un valor predeterminado de 10 si el límite no es válido.
+    }
+
+    let products = await productsManager.getAll(limit);
+    res.send({ status: "success", payload: products });
+});
+*/
+router.get('/', async (req, res) => {
+    let page = parseInt(req.query.page) || 1; // Si no se proporciona un valor válido, se establece en 1.
+    let limit = parseInt(req.query.limit) || 10; // Si no se proporciona un límite, se establece en 10.
+
+    // Verifica si los valores de página y límite son números válidos y mayores que cero.
+    if (isNaN(page) || page < 1 || isNaN(limit) || limit < 1) {
+        page = 1; // Establece un valor predeterminado de 1 si los valores no son válidos.
+        limit = 10; // Establece un valor predeterminado de 10 si el límite no es válido.
+    }
+
+    let products = await productsManager.getAll(page, limit);
+    res.send({ status: "success", payload: products });
+});
+
+
+
+
+
+
+
 
 // Obtener un producto por ID
 
 router.get('/:id', async (req, res) => {
-    const productId = req.params.id;
+    const productId = req.query.id;
     const result = await productsManager.getProductById(productId);
     res.json(result);
 });

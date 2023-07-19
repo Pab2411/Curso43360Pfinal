@@ -7,12 +7,23 @@ export default class Products {
         console.log("Estamos trabajando con bd mongo")
     }
 
-    // Todos los productos
+    // Todos los productos con opcion limit
+    /*
+        getAll = async (limit) => {
+            let products = await productsModel.find().limit(limit).lean();
+            return products;
+        }
+    */
 
-    getAll = async () => {
-        let products = await productsModel.find().lean();
-        return products
+    getAll = async (page = 1, limit = 10) => {
+        const skip = (page - 1) * limit;
+        let products = await productsModel.find().skip(skip).limit(limit).lean();
+        return products;
     }
+
+
+
+
 
     // selecciono un producto por ID
 
