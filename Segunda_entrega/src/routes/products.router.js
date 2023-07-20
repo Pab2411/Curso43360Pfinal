@@ -23,19 +23,26 @@ router.get('/', async (req, res) => {
     res.send({ status: "success", payload: products });
 });
 */
-router.get('/', async (req, res) => {
-    let page = parseInt(req.query.page) || 1; // Si no se proporciona un valor válido, se establece en 1.
-    let limit = parseInt(req.query.limit) || 10; // Si no se proporciona un límite, se establece en 10.
+router.get("/", async (req, res) => {
+    try {
+        let page = parseInt(req.query.page) || 1;
+        let limit = parseInt(req.query.limit) || 10;
+        const sortBy = req.query.sortBy || "price";
+        const sortOrder = req.query.sortOrder || "asc";
 
-    // Verifica si los valores de página y límite son números válidos y mayores que cero.
-    if (isNaN(page) || page < 1 || isNaN(limit) || limit < 1) {
-        page = 1; // Establece un valor predeterminado de 1 si los valores no son válidos.
-        limit = 10; // Establece un valor predeterminado de 10 si el límite no es válido.
+        if (isNaN(page) || page < 1 || isNaN(limit) || limit < 1) {
+            page = 1;
+            limit = 10;
+        }
+
+        const result = await productsManager.getAll(page, limit, sortBy, sortOrder);
+        res.json(result);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Error al obtener los productos" });
     }
-
-    let products = await productsManager.getAll(page, limit);
-    res.send({ status: "success", payload: products });
 });
+
 
 
 
