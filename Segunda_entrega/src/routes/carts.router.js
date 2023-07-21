@@ -38,19 +38,6 @@ router.get('/:cartId', async (req, res) => {
   }
 });
 
-/*
-router.get('/:cartId', async (req, res) => {
-  try {
-    const cartId = req.params.cartId;
-    const result = await cartManager.getCartById(cartId);
-    res.json(result);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Error al obtener los productos del carrito' });
-  }
-});
-*/
-
 
 // agrego un producto al carrito
 
