@@ -15,6 +15,7 @@ export default class Products {
         }
     */
 
+<<<<<<< HEAD
         getAll = async (page = 1, limit = 10, sortBy = "price", sortOrder = "asc", search = "") => {
             try {
               const sortOptions = {};
@@ -52,7 +53,45 @@ export default class Products {
               return { error: "Error al obtener los productos" };
             }
           };
+=======
+    getAll = async (page = 1, limit = 10, sortBy = "price", sortOrder = "asc", search = "") => {
+        try {
+            const sortOptions = {};
+            sortOptions[sortBy] = sortOrder === "desc" ? -1 : 1;
+>>>>>>> 202fe4cd33054b09fb06f450400d00febf5219bf
 
+            const options = {
+                page: page,
+                limit: limit,
+                sort: sortOptions,
+            };
+
+            let query = {};
+
+            // Si se proporciona un término de búsqueda, se agrega una expresión regular en la consulta
+            if (search) {
+                query.description = { $regex: search, $options: "i" }; // La opción "i" hace que la búsqueda sea insensible a mayúsculas y minúsculas
+            }
+
+            const products = await productsModel.paginate(query, options);
+
+            return {
+                status: "success",
+                payload: products.docs,
+                totalPages: products.totalPages,
+                prevPage: products.prevPage,
+                nextPage: products.nextPage,
+                page: products.page,
+                hasPrevPage: products.hasPrevPage,
+                hasNextPage: products.hasNextPage,
+                prevLink: products.hasPrevPage ? `/products?page=${products.prevPage}&limit=${limit}` : null,
+                nextLink: products.hasNextPage ? `/products?page=${products.nextPage}&limit=${limit}` : null,
+            };
+        } catch (error) {
+            console.error(error);
+            return { error: "Error al obtener los productos" };
+        }
+    };
 
 
 

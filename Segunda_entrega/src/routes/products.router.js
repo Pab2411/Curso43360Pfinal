@@ -26,6 +26,7 @@ router.get('/', async (req, res) => {
 */
 router.get("/", async (req, res) => {
     try {
+<<<<<<< HEAD
       let page = parseInt(req.query.page) || 1;
       let limit = parseInt(req.query.limit) || 10;
       const sortBy = req.query.sortBy || "price";
@@ -43,6 +44,26 @@ router.get("/", async (req, res) => {
       res.status(500).json({ error: "Error al obtener los productos" });
     }
   });
+=======
+        let page = parseInt(req.query.page) || 1;
+        let limit = parseInt(req.query.limit) || 10;
+        const sortBy = req.query.sortBy || "price";
+        const sortOrder = req.query.sortOrder || "asc";
+
+        if (isNaN(page) || page < 1 || isNaN(limit) || limit < 1) {
+            page = 1;
+            limit = 10;
+        }
+
+        const result = await productsManager.getAll(page, limit, sortBy, sortOrder);
+        res.json(result);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Error al obtener los productos" });
+    }
+});
+>>>>>>> 202fe4cd33054b09fb06f450400d00febf5219bf
+
 
 
 

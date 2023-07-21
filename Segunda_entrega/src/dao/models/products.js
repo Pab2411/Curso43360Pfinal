@@ -1,5 +1,9 @@
 import mongoose from "mongoose";
+<<<<<<< HEAD
 import mongoosePaginate from "mongoose-paginate-v2"
+=======
+import mongoosePaginate from "mongoose-paginate-v2";
+>>>>>>> 202fe4cd33054b09fb06f450400d00febf5219bf
 
 const productsCollection = 'products'
 
