@@ -34,14 +34,29 @@ El enrutador de Carts estará configurado en `/api/carts/` y contará con las si
   - `id`:
   - `products`: []
 
-- **GET /:cid:** Esta ruta listará los productos que pertenecen al carrito con el ID `cid` proporcionado.
+- **GET /:cid:** Esta ruta listará los productos que pertenecen al carrito totalmente detallado con el ID `cid` proporcionado.
 
 - **POST /:cid/product/:pid:** Esta ruta agregará el producto especificado al arreglo `products` del carrito seleccionado. El producto se agregará como un objeto con la siguiente estructura:
 
   - `product`: Solo Id
   - `quantity`: Número que representa la cantidad de ejemplares de dicho producto. 
 
+  - **DELETE api/carts/:cid/products/:pid:** deberá eliminar del carrito el producto seleccionado.
+
+  -**DELETE api/carts/:cid** Elimina todos los productos del carrito
+
+  - **PUT api/carts/:cid:** deberá actualizar el carrito con un arreglo de productos
+
+  -**PUT api/carts/:cid/products/:pid** actualiza la cantidad de ejemplares del producto por cualquier cantidad pasada desde req.body
+
   Si un producto ya existe se incrementa el campo `quantity`.
+
+## Rutas Views
+
+ -**‘/products’** para visualizar todos los productos con su respectiva paginación, incluye botones de pagina y un boton de para enviar al carrito (nofunciona momentaneamente)
+
+ -**‘/carts/:cid** Ingresando el Id del carrito se visualizan tosdos los productos que contiene.
+
 
   El enrutador de Chats estará configurado en `/api/messages/` y contará con las siguientes ruta:
 
@@ -51,6 +66,7 @@ El enrutador de Carts estará configurado en `/api/carts/` y contará con las si
   - `message`: 
 
 La persistencia de la información se implementará utilizando el sistema base de datos `MongoDB`
+Lapaginación se utiliza `mongoose-paginate-v2`
 
 ## Rutas de trabajo en Postman
 
