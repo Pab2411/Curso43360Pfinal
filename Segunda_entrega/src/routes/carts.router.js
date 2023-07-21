@@ -86,16 +86,17 @@ router.delete('/:cartId/products/:productId', async (req, res) => {
 
 router.put('/:cartId', async (req, res) => {
   try {
-    const cartId = req.params.cid;
+    const cartId = req.params.cartId;
     const products = req.body.products;
+
 
     const result = await cartManager.updateCart(cartId, products);
 
-    if (result.error) {
+    if (result.status === 'error') {
       return res.status(400).json({ error: result.error });
     }
 
-    res.json({ status: 'success', message: 'Carrito actualizado con éxito' });
+    res.json({ status: 'success', payload: result.payload });
   } catch (error) {
     console.error('Error al actualizar el carrito:', error);
     res.status(500).json({ error: 'Error al actualizar el carrito' });

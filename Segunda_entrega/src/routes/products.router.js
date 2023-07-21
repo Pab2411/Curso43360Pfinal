@@ -1,5 +1,6 @@
 import { Router } from "express";
 import Product from '../dao/dbManager/products.js';
+import productsModel from "../dao/models/products.js";
 import fs from "fs"
 
 
@@ -8,42 +9,38 @@ const productsManager = new Product();
 
 
 
-// Obtener todos los productos con opcion limit
-/*
-router.get('/', async (req, res) => {
-    let limit = req.query.limit || 10; // Si no se proporciona un límite, se establece en 10.
-    limit = parseInt(limit); // Convierte el valor del límite a un número entero.
-
-    // Verifica si el límite no es un número válido o es menor que cero.
-    if (isNaN(limit) || limit < 1) {
-        limit = 10; // Establece un valor predeterminado de 10 si el límite no es válido.
-    }
-
-    let products = await productsManager.getAll(limit);
-    res.send({ status: "success", payload: products });
-});
-*/
 router.get("/", async (req, res) => {
-    try {
-        let page = parseInt(req.query.page) || 1;
-        let limit = parseInt(req.query.limit) || 10;
-        const sortBy = req.query.sortBy || "price";
-        const sortOrder = req.query.sortOrder || "asc";
+    const { limit = 10 } = req.query
+    const { page = 1 } = req.query
 
-        if (isNaN(page) || page < 1 || isNaN(limit) || limit < 1) {
-            page = 1;
-            limit = 10;
-        }
+    let filtro = {};
 
-        const result = await productsManager.getAll(page, limit, sortBy, sortOrder);
-        res.json(result);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: "Error al obtener los productos" });
+    if (req.query.status == "true") {
+        filtro = { status: true }
+    } else if (req.query.status == "false") {
+        filtro = { status: false }
+    } else if (req.query.category) {
+        filtro = { category: req.query.category }
     }
-});
 
+    const { totalPages, docs, hasPrevPage, hasNextPage, nextPage, prevPage } = await productsModel.paginate(filtro, { limit, page, lean: true })
 
+    let products = docs
+
+    if (req.query.sort == "asc") {
+        products = await productsModel.find().sort({ price: 1 })
+    } else if (req.query.sort == "desc") {
+        products = await productsModel.find().sort({ price: -1 })
+    }
+
+    let prevLink
+    hasPrevPage ? prevLink = prevLink = `http://localhost:8080/products?page=${prevPage}` : null
+
+    let nextLink
+    hasNextPage ? nextLink = nextLink = `http://localhost:8080/products?page=${nextPage}` : null
+
+    res.send({ status: "success", payload: products, totalPages, page, hasPrevPage, hasNextPage, nextPage, prevPage, prevLink, nextLink })
+})
 
 
 

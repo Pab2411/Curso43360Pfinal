@@ -30,22 +30,6 @@ export default class Carts {
       throw new Error('Error al obtener el carrito por su ID');
     }
   };
-  /*
-  getCartById = async (cartId) => {
-    try {
-      const cart = await cartModel.findOne({ _id: cartId }).lean();
-
-      if (!cart) {
-        return { error: 'Carrito no encontrado' };
-      }
-
-      return { status: 'success', payload: cart.products };
-    } catch (error) {
-      console.error(error);
-      return { error: 'Error al obtener los productos del carrito' };
-    }
-  };
-*/
 
   // agrego un producto al carrito
 
@@ -95,6 +79,10 @@ export default class Carts {
         return { error: 'Carrito no encontrado' };
       }
 
+      if (!cart.products || !Array.isArray(cart.products)) {
+        return { error: 'El carrito no contiene la lista de productos o no está correctamente formateada' };
+      }
+
       cart.products = cart.products.filter(product => product.product.toString() !== productId);
 
       await cart.save();
@@ -108,102 +96,27 @@ export default class Carts {
 
   // Actualizo el carrito completo con un arreglo de productos
 
-  updateCart = async (cartId, products) => {
+  updateCart = async (cid, products) => {
+    if (!cid || !products) return ({ status: "error", error: "Faltan datos" });
+
     try {
-      if (!cartId || !products) {
-        return { error: 'Los parámetros cartId y products son obligatorios' };
-      }
+      const cart = await cartModel.findByIdAndUpdate(
+        cid,
+        { products: products },
+        { new: true }
+      );
 
-      const cart = await cartModel.findById(cartId);
+      if (!cart) return ({ status: "error", error: "Carrito inexistente" });
 
-      if (!cart) {
-        return { error: 'Carrito no encontrado' };
-      }
-
-      cart.products = products;
-
-      await cart.save();
-
-      return { status: 'success', message: 'Carrito actualizado con éxito' };
+      return ({ status: "success", payload: cart });
     } catch (error) {
       console.error(error);
-      return { error: 'Error al actualizar el carrito' };
+      return ({ status: "error", error: "Error al actualizar el carrito" });
     }
-  }
+  };
 
 
-
-  /*updateCart = async (cartId, products) => {
-    try {
-      if (!cartId || !products) {
-        return { error: 'Los parámetros cartId y products son obligatorios' };
-      }
-
-      const cart = await cartModel.findById(cartId);
-
-      if (!cart) {
-        return { error: 'Carrito no encontrado' };
-      }
-
-      for (const newProduct of products) {
-        const existingProduct = cart.products.find(p => p.product.toString() === newProduct.product.toString());
-
-        if (existingProduct) {
-          console.log('Antes de incrementar:', existingProduct.quantity);
-
-          existingProduct.quantity += newProduct.quantity;
-
-          console.log('Después de incrementar:', existingProduct.quantity);
-        } else {
-          cart.products.push(newProduct);
-        }
-      }
-
-      await cart.save();
-
-      return { status: 'success', message: 'Carrito actualizado con éxito' };
-    } catch (error) {
-      console.error(error);
-      return { error: 'Error al actualizar el carrito' };
-    }
-  }
-
-  /* async updateCart(cartId, products) {
-     try {
-       if (!cartId || !products) {
-         return { error: 'Los parámetros cartId y products son obligatorios' };
-       }
- 
-       const cart = await cartModel.findById(cartId);
- 
-       if (!cart) {
-         return { error: 'Carrito no encontrado' };
-       }
- 
-       for (const newProduct of products) {
-         const existingProduct = cart.products.find(p => p.product.toString() === newProduct.product.toString());
- 
-         if (existingProduct) {
-           console.log('Antes de incrementar:', existingProduct.quantity);
- 
-           existingProduct.quantity += newProduct.quantity;
- 
-           console.log('Después de incrementar:', existingProduct.quantity);
-         } else {
-           cart.products.push(newProduct);
-         }
-       }
-       await cart.save();
-       //await cartModel.findByIdAndUpdate(cartId, cart);
- 
-       return { status: 'success', message: 'Carrito actualizado con éxito' };
-     } catch (error) {
-       console.error(error);
-       return { error: 'Error al actualizar el carrito' };
-     }
-   }
- */
-  // Actualizo cantidad del producto, segun datos proporcionados
+  // Actualizo cantidad del producto, 
 
   updateProductQuantity = async (cartId, productId, quantity) => {
     try {
