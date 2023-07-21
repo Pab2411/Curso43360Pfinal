@@ -7,6 +7,7 @@ const router = Router();
 const cartManager = new Cart();
 
 // Crear un nuevo carrito
+
 router.post('/', async (req, res) => {
   try {
     const result = await cartManager.createCart();
@@ -86,10 +87,10 @@ router.delete('/:cartId/products/:productId', async (req, res) => {
 
 router.put('/:cartId', async (req, res) => {
   try {
-    const cartId = req.params.cid;
-    const products = req.body.products;
+    const cartId = req.params.cartId;
+    const products = req.body.products; // Asegúrate de enviar los productos como un array
 
-    const result = await cartManager.updateCart(cartId, products);
+    const result = await cartManager.updateCartProducts(cartId, products);
 
     if (result.error) {
       return res.status(400).json({ error: result.error });
@@ -101,6 +102,7 @@ router.put('/:cartId', async (req, res) => {
     res.status(500).json({ error: 'Error al actualizar el carrito' });
   }
 });
+
 
 
 
